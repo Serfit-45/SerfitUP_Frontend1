@@ -5,6 +5,6 @@ import type { Project, TeamMember } from "../types";
  * lo que puede afectar la visibilidad y las acciones disponibles para ese usuario en la aplicación. 
  * Devuelve true si el ID del gerente coincide con el ID del usuario, y false en caso contrario. */
 
-export const isManager = (managerId: Project['manager'], userId: TeamMember['_id']) => managerId === userId
+export const isManager = (managerId: Project['manager'], userId: TeamMember['_id']) => managerId === userId 
 
 
