@@ -9,6 +9,8 @@ import TaskModalDetails from "@/components/tasks/TaskModalDetails";
 import { useAuth } from "@/hooks/useAuth";
 import { isManager } from "@/utils/polices";
 import { useMemo } from "react";
+import TourGuide from "@/components/tour/TourGuide";
+import { DETAILS_STEPS, TOUR_SEEN_DETAILS } from "@/components/tour/tourSteps";
 
 export default function ProjectDetailsView() {
 
@@ -47,6 +49,7 @@ export default function ProjectDetailsView() {
                 {isManager(data.manager, user._id) && (
                     <div className="flex flex-wrap gap-3 mt-5">
                         <button
+                            data-tour="agregar-tarea"
                             type="button"
                             className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white
                                        bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors"
@@ -57,6 +60,7 @@ export default function ProjectDetailsView() {
                         </button>
 
                         <Link
+                            data-tour="colaboradores"
                             to={'team'}
                             className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium
                                        border border-violet-300 text-violet-700 hover:bg-violet-50 rounded-lg transition-colors"
@@ -75,6 +79,7 @@ export default function ProjectDetailsView() {
             <AddTaskModal />
             <EditTaskData />
             <TaskModalDetails />
+            <TourGuide steps={DETAILS_STEPS} seenKey={TOUR_SEEN_DETAILS} />
         </>
     )
 }

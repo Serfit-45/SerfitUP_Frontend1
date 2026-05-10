@@ -7,6 +7,8 @@ import { getProject } from "@/api/ProjectApi";
 import { useAuth } from "@/hooks/useAuth";
 import { isManager } from "@/utils/polices";
 import DeleteProjectModal from "@/components/projects/DeletProjectModal";
+import TourGuide from "@/components/tour/TourGuide";
+import { DASHBOARD_STEPS, TOUR_SEEN_DASHBOARD } from "@/components/tour/tourSteps";
 
 export default function DashboardView() {
 
@@ -33,6 +35,7 @@ export default function DashboardView() {
           <p className="mt-1 text-sm text-slate-500">Maneja y administra tus proyectos</p>
         </div>
         <Link
+          data-tour="nuevo-proyecto"
           className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors"
           to="/projects/create"
         >
@@ -46,9 +49,10 @@ export default function DashboardView() {
           role="list"
           className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3"
         >
-          {data.map((project) => (
+          {data.map((project, index) => (
             <li
               key={project._id}
+              data-tour={index === 0 ? 'proyecto-card' : undefined}
               className="flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-200"
             >
               <div className="flex-1 p-6">
@@ -77,7 +81,10 @@ export default function DashboardView() {
                   </div>
 
                   <Menu as="div" className="relative flex-none">
-                    <MenuButton className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+                    <MenuButton
+                      data-tour={index === 0 ? 'proyecto-menu' : undefined}
+                      className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                    >
                       <span className="sr-only">opciones</span>
                       <EllipsisVerticalIcon className="h-5 w-5" aria-hidden="true" />
                     </MenuButton>
@@ -160,6 +167,7 @@ export default function DashboardView() {
         </div>
       )}
       <DeleteProjectModal />
+      <TourGuide steps={DASHBOARD_STEPS} seenKey={TOUR_SEEN_DASHBOARD} />
     </>
   );
 }

@@ -57,6 +57,8 @@ export default function TaskList({ tasks, canEdit }: TaskListProps) {
     }
   })
 
+  const firstTaskId = tasks[0]?._id
+
   const groupedTasks = tasks.reduce((acc, task) => {
     let currentGroup = acc[task.status] ? [...acc[task.status]] : [];
     currentGroup = [...currentGroup, task];
@@ -86,7 +88,7 @@ export default function TaskList({ tasks, canEdit }: TaskListProps) {
     <>
       <h2 className="text-xl font-semibold text-slate-800 mb-5">Tareas</h2>
 
-      <div className="flex gap-4 pb-32 overflow-x-scroll 2xl:overflow-auto">
+      <div data-tour="kanban-board" className="flex gap-4 pb-32 overflow-x-scroll 2xl:overflow-auto">
         <DndContext onDragEnd={handleDragEnd}>
           {Object.entries(groupedTasks).map(([status, tasks]) => (
             <div key={status} className="min-w-[270px] 2xl:min-w-0 2xl:w-1/5 flex flex-col">
@@ -109,7 +111,7 @@ export default function TaskList({ tasks, canEdit }: TaskListProps) {
                     </li>
                   ) : (
                     tasks.map((task) => (
-                      <TaskCard key={task._id} task={task} canEdit={canEdit} />
+                      <TaskCard key={task._id} task={task} canEdit={canEdit} isFirstTask={task._id === firstTaskId} />
                     ))
                   )}
                 </ul>

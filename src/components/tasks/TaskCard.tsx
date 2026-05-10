@@ -11,9 +11,10 @@ import { useDraggable } from "@dnd-kit/core";
 type TaskCardProps = {
   task: TaskProject,
   canEdit: boolean
+  isFirstTask?: boolean
 };
 
-export default function TaskCard({ task, canEdit }: TaskCardProps) {
+export default function TaskCard({ task, canEdit, isFirstTask }: TaskCardProps) {
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task._id,
@@ -56,7 +57,10 @@ export default function TaskCard({ task, canEdit }: TaskCardProps) {
         </div>
 
         <Menu as="div" className="relative flex-none">
-          <MenuButton className="p-1 text-slate-300 hover:text-slate-500 hover:bg-slate-100 rounded transition-colors">
+          <MenuButton
+            data-tour={isFirstTask ? 'task-card-menu' : undefined}
+            className="p-1 text-slate-300 hover:text-slate-500 hover:bg-slate-100 rounded transition-colors"
+          >
             <span className="sr-only">opciones</span>
             <EllipsisVerticalIcon className="h-4 w-4" aria-hidden="true" />
           </MenuButton>
