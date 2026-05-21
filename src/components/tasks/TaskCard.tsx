@@ -22,6 +22,7 @@ export default function TaskCard({ task, canEdit, isFirstTask }: TaskCardProps) 
   const navigate = useNavigate();
   const params = useParams()
   const projectId = params.projectId!
+  const milestoneId = params.milestoneId!
 
   const queryClient = useQueryClient()
   const { mutate } = useMutation({
@@ -31,7 +32,7 @@ export default function TaskCard({ task, canEdit, isFirstTask }: TaskCardProps) 
     },
     onSuccess: (data) => {
       toast.success(data)
-      queryClient.invalidateQueries({ queryKey: ['project', projectId] })
+      queryClient.invalidateQueries({ queryKey: ['milestone', milestoneId] })
     }
   })
 
@@ -99,7 +100,7 @@ export default function TaskCard({ task, canEdit, isFirstTask }: TaskCardProps) 
                       <button
                         type='button'
                         className='block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50'
-                        onClick={() => mutate({ projectId, taskId: task._id })}
+                        onClick={() => mutate({ projectId, milestoneId, taskId: task._id })}
                       >
                         Eliminar Tarea
                       </button>

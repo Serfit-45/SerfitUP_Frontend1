@@ -21,6 +21,7 @@ export default function NoteDetail({ note }: NoteDetailProps) {
     const queryParams = new URLSearchParams(location.search)
 
     const projectId = param.projectId!
+    const milestoneId = param.milestoneId!
     const taskId = queryParams.get("viewTask")!
 
     const queryClient = useQueryClient()
@@ -49,7 +50,7 @@ export default function NoteDetail({ note }: NoteDetailProps) {
                     type="button"
                     aria-label="Eliminar nota"
                     className="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
-                    onClick={() => mutate({ projectId, taskId, noteId: note._id })}
+                    onClick={() => mutate({ projectId, milestoneId, taskId, noteId: note._id })}
                 >
                     <TrashIcon className="w-4 h-4" aria-hidden="true" />
                 </button>

@@ -19,6 +19,7 @@ export default function AddTaskModal() {
 
     const params = useParams();
     const projectId = params.projectId!
+    const milestoneId = params.milestoneId!
 
     const initialValues: TaskFormData = { name: '', description: '' };
 
@@ -33,7 +34,7 @@ export default function AddTaskModal() {
             toast.error(error.message);
         },
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+            queryClient.invalidateQueries({ queryKey: ['milestone', milestoneId] });
             toast.success(data)
             reset();
             navigate(location.pathname, { replace: true });
@@ -41,7 +42,7 @@ export default function AddTaskModal() {
     });
 
     const handleCreateTask = (formData: TaskFormData) => {
-        const data = { formData, projectId }
+        const data = { formData, projectId, milestoneId }
         mutate(data);
     }
 

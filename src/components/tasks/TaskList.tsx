@@ -1,5 +1,5 @@
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
-import type { Project, TaskProject, TaskStatus } from "@/types/index";
+import type { Milestone, TaskProject, TaskStatus } from "@/types/index";
 import TaskCard from "./TaskCard";
 import { statusTranslations } from "@/locales/es";
 import DropTask from "./DropTask";
@@ -45,6 +45,7 @@ export default function TaskList({ tasks, canEdit }: TaskListProps) {
 
   const params = useParams()
   const projectId = params.projectId!
+  const milestoneId = params.milestoneId!
   const queryClient = useQueryClient()
   const { mutate } = useMutation({
     mutationFn: updateStatus,
@@ -53,7 +54,7 @@ export default function TaskList({ tasks, canEdit }: TaskListProps) {
     },
     onSuccess: (data) => {
       toast.success(data)
-      queryClient.invalidateQueries({ queryKey: ['project', projectId] })
+      queryClient.invalidateQueries({ queryKey: ['milestone', milestoneId] })
     }
   })
 
@@ -70,9 +71,9 @@ export default function TaskList({ tasks, canEdit }: TaskListProps) {
     if (over && over.id) {
       const taskId = active.id.toString()
       const status = over.id as TaskStatus
-      mutate({ projectId, taskId, status })
+      mutate({ projectId, milestoneId, taskId, status })
 
-      queryClient.setQueryData(['projectId', projectId], (prevData: Project) => {
+      queryClient.setQueryData(['milestone', milestoneId], (prevData: Milestone) => {
         const updatedTasks = prevData.tasks.map((task) => {
           if (task._id === taskId) {
             return { ...task, status }

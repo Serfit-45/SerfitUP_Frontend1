@@ -14,6 +14,7 @@ export default function TaskModalDetails() {
 
     const params = useParams()
     const projectId = params.projectId!
+    const milestoneId = params.milestoneId!
     const navigate = useNavigate()
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
@@ -23,7 +24,7 @@ export default function TaskModalDetails() {
 
     const { data, isError, error } = useQuery({
         queryKey: ['task', taskId],
-        queryFn: () => getTaskById({ projectId, taskId }),
+        queryFn: () => getTaskById({ projectId, milestoneId, taskId }),
         enabled: !!taskId,
         retry: false
     })
@@ -36,14 +37,14 @@ export default function TaskModalDetails() {
         },
         onSuccess: (data) => {
             toast.success(data)
-            queryClient.invalidateQueries({ queryKey: ['project', projectId] })
+            queryClient.invalidateQueries({ queryKey: ['milestone', milestoneId] })
             queryClient.invalidateQueries({ queryKey: ['task', taskId] })
         }
     })
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const status = e.target.value as TaskStatus
-        const data = { projectId, taskId, status }
+        const data = { projectId, milestoneId, taskId, status }
         mutate(data)
     }
 

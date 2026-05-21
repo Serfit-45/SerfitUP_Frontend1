@@ -12,6 +12,7 @@ export default function AddNoteForm() {
   const queryParams = new URLSearchParams(location.search)
 
   const projectId = params.projectId!
+  const milestoneId = params.milestoneId!
   const taskId = queryParams.get("viewTask")!
   const initialValues: NoteFormData = { content: '' }
 
@@ -33,7 +34,7 @@ export default function AddNoteForm() {
   })
 
   const handleAddNote = (formData: NoteFormData) => {
-    mutate({ formData, projectId, taskId })
+    mutate({ formData, projectId, milestoneId, taskId })
   }
 
   return (

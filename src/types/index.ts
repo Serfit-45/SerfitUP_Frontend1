@@ -1,12 +1,5 @@
 import { z } from 'zod'
 
-/** Este archivo define los tipos y esquemas de validación para los datos utilizados en la aplicación, 
- * incluyendo los tipos relacionados con la autenticación, los usuarios, las tareas, los proyectos y los miembros del equipo. 
- * Utiliza la biblioteca Zod para definir los esquemas de validación y los tipos inferidos a partir de esos esquemas, 
- * lo que proporciona una forma estructurada y segura de manejar los datos en toda la aplicación. 
- * Estos tipos se utilizan en diferentes partes de la aplicación para garantizar la consistencia y la seguridad de los datos, 
- * facilitando el desarrollo y el mantenimiento de la aplicación. */
-
 /**
  * Auth & User
  */
@@ -37,8 +30,7 @@ export const userSchema = authSchema.pick({
     _id: z.string(),
 })
 export type User = z.infer<typeof userSchema>
-export type UserProfileForm = Pick<User, 'name' | 'email'> 
-
+export type UserProfileForm = Pick<User, 'name' | 'email'>
 
 /** Notes */
 export const noteSchema = z.object({
@@ -61,7 +53,7 @@ export const taskSchema = z.object({
     _id: z.string(),
     name: z.string(),
     description: z.string(),
-    project: z.string(),
+    milestone: z.string(),
     status: taskStatusSchema,
     completedBy: z.array(z.object({
         _id: z.string(),
@@ -78,22 +70,37 @@ export const taskSchema = z.object({
 export const taskProjectSchema = taskSchema.pick({
     _id: true,
     name: true,
-    description: true,  
+    description: true,
     status: true,
 })
 
-export type Task =z.infer<typeof taskSchema>
+export type Task = z.infer<typeof taskSchema>
 export type TaskFormData = Pick<Task, 'name' | 'description'>
 export type TaskProject = z.infer<typeof taskProjectSchema>
 
-/** Projects */ 
+/** Milestones */
+export const milestoneProjectSchema = z.object({
+    _id: z.string(),
+    name: z.string(),
+    description: z.string(),
+})
+export type MilestoneProject = z.infer<typeof milestoneProjectSchema>
+
+export const milestoneSchema = milestoneProjectSchema.extend({
+    project: z.string(),
+    tasks: z.array(taskProjectSchema),
+})
+export type Milestone = z.infer<typeof milestoneSchema>
+export type MilestoneFormData = Pick<Milestone, 'name' | 'description'>
+
+/** Projects */
 export const projectSchema = z.object({
     _id: z.string(),
     projectName: z.string(),
     clientName: z.string(),
     description: z.string(),
     manager: z.string(),
-    tasks: z.array(taskProjectSchema),
+    milestones: z.array(milestoneProjectSchema),
     team: z.array(z.string())
 })
 
@@ -113,9 +120,9 @@ export const editProjectSchema = projectSchema.pick({
     description: true,
 })
 export type Project = z.infer<typeof projectSchema>
-export type ProjectFormData = Pick<Project, 'clientName' | 'projectName' | 'description' >
+export type ProjectFormData = Pick<Project, 'clientName' | 'projectName' | 'description'>
 
-/** Team Members*/
+/** Team Members */
 const teamMemberSchema = userSchema.pick({
     _id: true,
     name: true,

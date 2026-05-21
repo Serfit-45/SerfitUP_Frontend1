@@ -18,6 +18,7 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
     const navigate = useNavigate();
     const params = useParams();
     const projectId = params.projectId!
+    const milestoneId = params.milestoneId!
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm<TaskFormData>({
         defaultValues: {
@@ -33,7 +34,7 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
             toast.error(error.message);
         },
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+            queryClient.invalidateQueries({ queryKey: ['milestone', milestoneId] });
             queryClient.invalidateQueries({ queryKey: ['task', taskId] });
             toast.success(data)
             reset()
@@ -42,7 +43,7 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
     });
 
     const handleEditTask = (formData: TaskFormData) => {
-        const data = { projectId, taskId, formData }
+        const data = { projectId, milestoneId, taskId, formData }
         mutate(data);
     }
 
