@@ -17,4 +17,7 @@
   .bg-auth-gradient {
     background: linear-gradient(to right, #e2e2e2, #c9d6ff);
   }
+  .progress-fill {
+    width: var(--progress-width, 0%);
+  }
 }

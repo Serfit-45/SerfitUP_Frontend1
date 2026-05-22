@@ -1,6 +1,6 @@
 import { addUserToProject } from "@/api/TeamApi"
 import type { TeamMember } from "@/types/index"
-import { UserPlusIcon } from "@heroicons/react/24/outline"
+import { UserPlusIcon, CheckCircleIcon } from "@heroicons/react/24/outline"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { toast } from "react-toastify"
@@ -8,13 +8,16 @@ import { toast } from "react-toastify"
 type SearchResultProps = {
     user: TeamMember
     reset: () => void
+    team: TeamMember[]
 }
 
-export default function SearchResult({ user, reset }: SearchResultProps) {
+export default function SearchResult({ user, reset, team }: SearchResultProps) {
 
     const navigate = useNavigate()
     const params = useParams()
     const projectId = params.projectId!
+
+    const isAlreadyMember = team.some((member) => member._id === user._id)
 
     const queryClient = useQueryClient()
     const { mutate } = useMutation({
@@ -47,15 +50,23 @@ export default function SearchResult({ user, reset }: SearchResultProps) {
                     </div>
                     <p className="text-sm font-semibold text-slate-800 truncate">{user.name}</p>
                 </div>
-                <button
-                    type="button"
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white
-                               bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors flex-shrink-0"
-                    onClick={handleAddUserToProject}
-                >
-                    <UserPlusIcon className="w-4 h-4" aria-hidden="true" />
-                    Agregar
-                </button>
+
+                {isAlreadyMember ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-700 bg-green-50 border border-green-200 rounded-lg flex-shrink-0">
+                        <CheckCircleIcon className="w-4 h-4" />
+                        Ya es colaborador
+                    </span>
+                ) : (
+                    <button
+                        type="button"
+                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white
+                                   bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors flex-shrink-0"
+                        onClick={handleAddUserToProject}
+                    >
+                        <UserPlusIcon className="w-4 h-4" aria-hidden="true" />
+                        Agregar
+                    </button>
+                )}
             </div>
         </div>
     )

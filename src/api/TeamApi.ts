@@ -2,8 +2,20 @@ import { isAxiosError } from "axios";
 import api from "@/lib/axios";
 import { type TeamMemberForm, type Project, type TeamMember, teamMembersSchema } from "../types";
 
-/** API de equipo, maneja las solicitudes relacionadas con la gestión de miembros del equipo dentro de los proyectos,
- * como búsqueda, adición, eliminación y obtención de miembros del equipo por ID */
+export async function getAllSystemUsers(projectId: Project['_id']) {
+    try {
+        const url = `/projects/${projectId}/team/users`
+        const { data } = await api(url)
+        const response = teamMembersSchema.safeParse(data)
+        if (response.success) return response.data
+        return []
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response?.data?.error || "Error fetching users");
+        }
+        throw new Error("Error fetching users");
+    }
+}
 
 export async function findUserByEmail({ projectId, formData }: { projectId: Project['_id'], formData: TeamMemberForm }) {
     try {

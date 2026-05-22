@@ -32,7 +32,7 @@ export default function ProjectTeamView() {
 
     if (isLoading) return (
         <div className="flex items-center justify-center py-32">
-            <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 rounded-full border-violet-600 border-t-transparent animate-spin" />
         </div>
     );
     if (isError) return <Navigate to={'/404'} />
@@ -42,10 +42,10 @@ export default function ProjectTeamView() {
             <div className="mb-8">
                 <Link
                     to={`/projects/${projectId}`}
-                    className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-violet-600 transition-colors mb-4"
+                    className="inline-flex items-center gap-2 mb-4 text-sm font-medium transition-colors text-slate-500 hover:text-violet-600"
                 >
                     <ArrowLeftIcon className="w-4 h-4" />
-                    Volver al Proyecto
+                    Volver a Hitos
                 </Link>
                 <h1 className="text-3xl font-bold text-slate-900">Equipo del Proyecto</h1>
                 <p className="mt-1 text-sm text-slate-500">Administra los colaboradores de este proyecto</p>
@@ -64,7 +64,7 @@ export default function ProjectTeamView() {
             </div>
 
             <div>
-                <h2 className="text-lg font-semibold text-slate-800 mb-4">
+                <h2 className="mb-4 text-lg font-semibold text-slate-800">
                     Miembros actuales
                     {data.length > 0 && (
                         <span className="ml-2 text-sm font-medium text-slate-400">({data.length})</span>
@@ -72,26 +72,26 @@ export default function ProjectTeamView() {
                 </h2>
 
                 {data.length ? (
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+                    <div className="bg-white border shadow-sm rounded-xl border-slate-200">
                         <ul role="list" className="divide-y divide-slate-100">
                             {data.map((member) => (
                                 <li key={member._id} className="flex items-center justify-between px-6 py-4 first:rounded-t-xl last:rounded-b-xl">
-                                    <div className="flex items-center gap-4 min-w-0">
-                                        <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0">
+                                    <div className="flex items-center min-w-0 gap-4">
+                                        <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-full bg-violet-100">
                                             <span className="text-sm font-semibold text-violet-600">
                                                 {member.name.charAt(0).toUpperCase()}
                                             </span>
                                         </div>
                                         <div className="min-w-0">
                                             <p className="text-sm font-semibold text-slate-800">{member.name}</p>
-                                            <p className="text-xs text-slate-400 truncate">{member.email}</p>
+                                            <p className="text-xs truncate text-slate-400">{member.email}</p>
                                         </div>
                                     </div>
 
                                     <Menu as="div" className="relative flex-none">
                                         <MenuButton className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
                                             <span className="sr-only">opciones</span>
-                                            <EllipsisVerticalIcon className="h-5 w-5" aria-hidden="true" />
+                                            <EllipsisVerticalIcon className="w-5 h-5" aria-hidden="true" />
                                         </MenuButton>
                                         <Transition
                                             as={Fragment}
@@ -102,12 +102,12 @@ export default function ProjectTeamView() {
                                             leaveFrom="transform opacity-100 scale-100"
                                             leaveTo="transform opacity-0 scale-95"
                                         >
-                                            <MenuItems className="absolute right-0 z-10 w-48 mt-1 origin-top-right bg-white rounded-lg shadow-lg ring-1 ring-slate-900/10 focus:outline-none overflow-hidden">
+                                            <MenuItems className="absolute right-0 z-10 w-48 mt-1 overflow-hidden origin-top-right bg-white rounded-lg shadow-lg ring-1 ring-slate-900/10 focus:outline-none">
                                                 <div className="py-1">
                                                     <MenuItem>
                                                         <button
                                                             type='button'
-                                                            className='block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50'
+                                                            className='block w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-red-50'
                                                             onClick={() => mutate({ projectId, userId: member._id })}
                                                         >
                                                             Eliminar del Proyecto
@@ -122,7 +122,7 @@ export default function ProjectTeamView() {
                         </ul>
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-16 text-center bg-white rounded-xl border border-slate-200 shadow-sm">
+                    <div className="flex flex-col items-center justify-center py-16 text-center bg-white border shadow-sm rounded-xl border-slate-200">
                         <p className='text-sm text-slate-400'>No hay miembros en este equipo</p>
                     </div>
                 )}

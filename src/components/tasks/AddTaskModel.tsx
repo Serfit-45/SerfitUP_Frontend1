@@ -2,12 +2,13 @@ import { Fragment } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import TaskForm from './TaskForm';
 import type { TaskFormData } from '@/types/index';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { createTask } from '@/api/TaskAPI';
+import { getProjectTeam } from '@/api/TeamApi';
 
 export default function AddTaskModal() {
 
@@ -21,7 +22,13 @@ export default function AddTaskModal() {
     const projectId = params.projectId!
     const milestoneId = params.milestoneId!
 
-    const initialValues: TaskFormData = { name: '', description: '' };
+    const { data: team } = useQuery({
+        queryKey: ['projectTeam', projectId],
+        queryFn: () => getProjectTeam(projectId),
+        retry: false
+    })
+
+    const initialValues: TaskFormData = { name: '', description: '', assignedTo: '' };
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm({
         defaultValues: initialValues
@@ -98,7 +105,7 @@ export default function AddTaskModal() {
                                     onSubmit={handleSubmit(handleCreateTask)}
                                     noValidate
                                 >
-                                    <TaskForm register={register} errors={errors} />
+                                    <TaskForm register={register} errors={errors} team={team ?? []} />
                                     <input
                                         type="submit"
                                         value="Guardar Tarea"

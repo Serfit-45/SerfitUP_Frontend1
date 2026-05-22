@@ -54,6 +54,7 @@ export const taskSchema = z.object({
     name: z.string(),
     description: z.string(),
     milestone: z.string(),
+    assignedTo: userSchema.nullable().optional(),
     status: taskStatusSchema,
     completedBy: z.array(z.object({
         _id: z.string(),
@@ -75,7 +76,7 @@ export const taskProjectSchema = taskSchema.pick({
 })
 
 export type Task = z.infer<typeof taskSchema>
-export type TaskFormData = Pick<Task, 'name' | 'description'>
+export type TaskFormData = Pick<Task, 'name' | 'description'> & { assignedTo?: string }
 export type TaskProject = z.infer<typeof taskProjectSchema>
 
 /** Milestones */
@@ -111,6 +112,15 @@ export const dashboardProjectSchema = z.array(
         clientName: true,
         description: true,
         manager: true
+    }).extend({
+        createdAt: z.string(),
+        teamDetails: z.array(z.object({ _id: z.string(), name: z.string() })),
+        milestoneProgress: z.array(z.object({
+            name: z.string(),
+            total: z.number(),
+            completed: z.number(),
+            percent: z.number()
+        }))
     })
 )
 

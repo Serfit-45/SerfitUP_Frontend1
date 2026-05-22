@@ -5,9 +5,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import type { Task, TaskFormData } from '@/types/index';
 import { useForm } from 'react-hook-form';
 import TaskForm from './TaskForm';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { updateTask } from '@/api/TaskAPI';
+import { getProjectTeam } from '@/api/TeamApi';
 
 type EditTaskModalProps = {
     data: Task
@@ -20,10 +21,17 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
     const projectId = params.projectId!
     const milestoneId = params.milestoneId!
 
+    const { data: team } = useQuery({
+        queryKey: ['projectTeam', projectId],
+        queryFn: () => getProjectTeam(projectId),
+        retry: false
+    })
+
     const { register, handleSubmit, reset, formState: { errors } } = useForm<TaskFormData>({
         defaultValues: {
             name: data.name,
-            description: data.description
+            description: data.description,
+            assignedTo: data.assignedTo?._id ?? ''
         }
     });
 
@@ -99,7 +107,7 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
                                     onSubmit={handleSubmit(handleEditTask)}
                                     noValidate
                                 >
-                                    <TaskForm register={register} errors={errors} />
+                                    <TaskForm register={register} errors={errors} team={team ?? []} />
                                     <input
                                         type="submit"
                                         className="w-full py-2.5 px-6 font-semibold text-sm text-white uppercase tracking-wide

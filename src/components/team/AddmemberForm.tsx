@@ -1,31 +1,58 @@
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ErrorMessage from "../ErrorMessage";
 import type { TeamMemberForm } from "@/types/index";
-import { findUserByEmail } from "@/api/TeamApi";
+import { addUserToProject, findUserByEmail, getAllSystemUsers, getProjectTeam } from "@/api/TeamApi";
 import SearchResult from "./SearchResult";
+import { CheckCircleIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import { toast } from "react-toastify";
 
 export default function AddMemberForm() {
     const initialValues: TeamMemberForm = { email: '' }
     const params = useParams()
     const projectId = params.projectId!
+    const navigate = useNavigate()
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm({ defaultValues: initialValues })
 
-    const mutation = useMutation({
+    const { data: team } = useQuery({
+        queryKey: ["projectTeam", projectId],
+        queryFn: () => getProjectTeam(projectId),
+        retry: false
+    })
+
+    const { data: allUsers } = useQuery({
+        queryKey: ["systemUsers", projectId],
+        queryFn: () => getAllSystemUsers(projectId),
+        retry: false
+    })
+
+    const searchMutation = useMutation({
         mutationFn: findUserByEmail
     })
 
-    const handleSearchUser = async (formData: TeamMemberForm) => {
-        const data = { projectId, formData }
-        mutation.mutate(data)
+    const queryClient = useQueryClient()
+    const addMutation = useMutation({
+        mutationFn: addUserToProject,
+        onError: (error) => toast.error(error.message),
+        onSuccess: (data) => {
+            toast.success(data)
+            queryClient.invalidateQueries({ queryKey: ["projectTeam", projectId] })
+            navigate(location.pathname, { replace: true })
+        }
+    })
+
+    const handleSearchUser = (formData: TeamMemberForm) => {
+        searchMutation.mutate({ projectId, formData })
     }
 
     const resetData = () => {
         reset()
-        mutation.reset()
+        searchMutation.reset()
     }
+
+    const teamIds = new Set(team?.map((m) => m._id) ?? [])
 
     return (
         <>
@@ -63,18 +90,61 @@ export default function AddMemberForm() {
                 />
             </form>
 
-            {mutation.isPending && (
+            {searchMutation.isPending && (
                 <div className="mt-4 flex items-center justify-center gap-2 text-sm text-slate-500">
                     <div className="w-4 h-4 border-2 border-violet-600 border-t-transparent rounded-full animate-spin" />
                     Buscando usuario...
                 </div>
             )}
-            {mutation.isError && (
+            {searchMutation.isError && (
                 <div className="mt-4">
-                    <ErrorMessage>{mutation.error instanceof Error ? mutation.error.message : "Error al buscar usuario"}</ErrorMessage>
+                    <ErrorMessage>{searchMutation.error instanceof Error ? searchMutation.error.message : "Error al buscar usuario"}</ErrorMessage>
                 </div>
             )}
-            {mutation.data && <SearchResult user={mutation.data} reset={resetData} />}
+            {searchMutation.data && <SearchResult user={searchMutation.data} reset={resetData} team={team ?? []} />}
+
+            {allUsers && allUsers.length > 0 && (
+                <div className="mt-6">
+                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">
+                        Usuarios en el sistema ({allUsers.length})
+                    </p>
+                    <ul className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
+                        {allUsers.map((user) => {
+                            const isMember = teamIds.has(user._id)
+                            return (
+                                <li
+                                    key={user._id}
+                                    className={`flex items-center justify-between gap-3 p-2 rounded-lg transition-colors
+                                        ${isMember
+                                            ? 'bg-slate-50 cursor-default'
+                                            : 'bg-slate-50 hover:bg-violet-50 cursor-pointer'
+                                        }`}
+                                    onClick={() => !isMember && addMutation.mutate({ projectId, id: user._id })}
+                                >
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0
+                                            ${isMember ? 'bg-green-100' : 'bg-violet-100'}`}>
+                                            <span className={`text-xs font-semibold ${isMember ? 'text-green-600' : 'text-violet-600'}`}>
+                                                {user.name.charAt(0).toUpperCase()}
+                                            </span>
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-medium text-slate-700 truncate">{user.name}</p>
+                                            <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                                        </div>
+                                    </div>
+
+                                    {isMember ? (
+                                        <CheckCircleIcon className="w-4 h-4 text-green-500 flex-shrink-0" />
+                                    ) : (
+                                        <UserPlusIcon className="w-4 h-4 text-slate-300 group-hover:text-violet-500 flex-shrink-0" />
+                                    )}
+                                </li>
+                            )
+                        })}
+                    </ul>
+                </div>
+            )}
         </>
     )
 }

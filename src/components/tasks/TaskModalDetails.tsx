@@ -50,7 +50,7 @@ export default function TaskModalDetails() {
 
     if (isError) {
         toast.error(error.message, { toastId: 'error' })
-        return <Navigate to={`/projects/${projectId}`} />
+        return <Navigate to={`/milestones/${milestoneId}`} />
     }
 
     if (data) return (
@@ -82,20 +82,20 @@ export default function TaskModalDetails() {
                             <DialogPanel className="w-full max-w-2xl overflow-hidden text-left bg-white shadow-xl rounded-2xl">
                                 <div className="flex items-start justify-between px-6 pt-6 pb-4 border-b border-slate-100">
                                     <div className="flex-1 min-w-0 pr-4">
-                                        <div className="flex items-center gap-2 text-xs text-slate-400 mb-2">
+                                        <div className="flex items-center gap-2 mb-2 text-xs text-slate-400">
                                             <ClockIcon className="w-3.5 h-3.5" />
                                             <span>Agregada el {formatDate(data.createdAt)}</span>
                                             <span>·</span>
                                             <span>Actualizada el {formatDate(data.updatedAt)}</span>
                                         </div>
-                                        <DialogTitle as="h3" className="text-xl font-bold text-slate-900 leading-snug">
+                                        <DialogTitle as="h3" className="text-xl font-bold leading-snug text-slate-900">
                                             {data.name}
                                         </DialogTitle>
                                     </div>
                                     <button
                                         type="button"
                                         aria-label="Cerrar modal"
-                                        className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0"
+                                        className="flex-shrink-0 p-2 transition-colors rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
                                         onClick={() => navigate(location.pathname, { replace: true })}
                                     >
                                         <XMarkIcon className="w-5 h-5" aria-hidden="true" />
@@ -105,13 +105,27 @@ export default function TaskModalDetails() {
                                 <div className="p-6 space-y-6 overflow-y-auto max-h-[70vh]">
                                     <p className='text-sm text-slate-600'>{data.description}</p>
 
+                                    {data.assignedTo && (
+                                        <div className="flex items-center gap-2 text-sm">
+                                            <span className="font-medium text-slate-700">Asignado a:</span>
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-5 h-5 rounded-full bg-violet-100 flex items-center justify-center">
+                                                    <span className="text-xs font-semibold text-violet-600">
+                                                        {data.assignedTo.name.charAt(0).toUpperCase()}
+                                                    </span>
+                                                </div>
+                                                <span className="text-slate-600">{data.assignedTo.name}</span>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {data.completedBy.length > 0 && (
                                         <div>
-                                            <p className='text-sm font-semibold text-slate-700 mb-3'>Historial de cambios</p>
+                                            <p className='mb-3 text-sm font-semibold text-slate-700'>Historial de cambios</p>
                                             <ul className='space-y-2'>
                                                 {data.completedBy.map((activityLog) => (
                                                     <li key={activityLog._id} className="flex items-center gap-2 text-sm text-slate-600">
-                                                        <span className="w-2 h-2 rounded-full bg-violet-400 flex-shrink-0" />
+                                                        <span className="flex-shrink-0 w-2 h-2 rounded-full bg-violet-400" />
                                                         <span className='font-medium text-slate-700'>
                                                             {statusTranslations[activityLog.status]}
                                                         </span>
@@ -126,8 +140,7 @@ export default function TaskModalDetails() {
                                     <div className='space-y-1.5'>
                                         <label className='block text-sm font-medium text-slate-700'>Estado Actual</label>
                                         <select
-                                            className='w-full rounded-lg border-slate-300 shadow-sm text-sm
-                                                       focus:border-violet-500 focus:ring-violet-500 transition-colors'
+                                            className='w-full text-sm transition-colors rounded-lg shadow-sm border-slate-300 focus:border-violet-500 focus:ring-violet-500'
                                             defaultValue={data.status}
                                             onChange={handleChange}
                                         >
@@ -137,7 +150,7 @@ export default function TaskModalDetails() {
                                         </select>
                                     </div>
 
-                                    <div className="border-t border-slate-100 pt-6">
+                                    <div className="pt-6 border-t border-slate-100">
                                         <NotesPanel notes={data.notes} />
                                     </div>
                                 </div>

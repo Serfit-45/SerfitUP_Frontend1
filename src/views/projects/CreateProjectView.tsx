@@ -35,7 +35,7 @@ export default function CreateProjectView() {
       <div className="mb-6">
         <Link
           to='/'
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-violet-600 transition-colors mb-4"
+          className="inline-flex items-center gap-2 mb-4 text-sm font-medium transition-colors text-slate-600 hover:text-violet-600"
         >
           <ArrowLeftIcon className="w-4 h-4" />
           Volver a Proyectos
@@ -44,7 +44,7 @@ export default function CreateProjectView() {
         <p className="mt-1 text-sm text-slate-500">Llena el siguiente formulario para crear un proyecto</p>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8">
+      <div className="p-8 bg-white border shadow-sm rounded-xl border-slate-200">
         <form
           onSubmit={handleSubmit(handleForm)}
           noValidate
