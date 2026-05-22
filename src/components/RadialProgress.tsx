@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { RadialBarChart, RadialBar, PolarAngleAxis, Tooltip } from 'recharts'
+import type { TooltipProps } from 'recharts'
+import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent'
 
 type MilestoneProgress = {
     name: string
@@ -71,7 +73,7 @@ export default function RadialProgress({ milestones }: RadialProgressProps) {
                 >
                     <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
                     <Tooltip
-                        content={({ active, payload }) => {
+                        content={({ active, payload }: TooltipProps<ValueType, NameType>) => {
                             if (!active || !payload?.length) return null
                             const d = payload[0].payload
                             return (
