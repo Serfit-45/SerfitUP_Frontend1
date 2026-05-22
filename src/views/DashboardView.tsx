@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getProject } from "@/api/ProjectApi";
 import { useAuth } from "@/hooks/useAuth";
 import { isManager } from "@/utils/polices";
-import { getInitials, daysSince, avatarColor } from "@/utils/utils";
+import { getInitials, daysSince, avatarColor, cardAccent } from "@/utils/utils";
 import RadialProgress from "@/components/RadialProgress";
 import DeleteProjectModal from "@/components/projects/DeletProjectModal";
 import TourGuide from "@/components/tour/TourGuide";
@@ -51,18 +51,20 @@ export default function DashboardView() {
           role="list"
           className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3"
         >
-          {data.map((project, index) => (
+          {data.map((project, index) => {
+            const accent = cardAccent(project.projectName)
+            return (
             <li
               key={project._id}
               data-tour={index === 0 ? 'proyecto-card' : undefined}
-              className="flex flex-col transition-shadow duration-200 bg-white border shadow-sm rounded-xl border-slate-200 hover:shadow-md"
+              className={`flex flex-col transition-shadow duration-200 bg-white border-t-4 border border-slate-200 shadow-sm rounded-xl hover:shadow-md ${accent.border}`}
             >
               <div className="flex-1 p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="mb-3">
                       {isManager(project.manager, user._id) ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-violet-100 text-violet-700">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${accent.badge} ${accent.text}`}>
                           Administrador
                         </span>
                       ) : (
@@ -179,7 +181,7 @@ export default function DashboardView() {
                 </div>
               </div>
             </li>
-          ))}
+          )})}
         </ul>
       ) : (
         <div className="flex flex-col items-center justify-center py-24 text-center">
