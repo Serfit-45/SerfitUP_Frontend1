@@ -161,7 +161,7 @@ export default function DashboardView() {
                       </div>
                     ))}
                     {project.teamDetails.length > 4 && (
-                      <div className="w-7 h-7 rounded-full bg-slate-200 border-2 border-white flex items-center justify-center">
+                      <div className="flex items-center justify-center border-2 border-white rounded-full w-7 h-7 bg-slate-200">
                         <span className="text-[10px] font-semibold text-slate-600">+{project.teamDetails.length - 4}</span>
                       </div>
                     )}
