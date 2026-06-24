@@ -1,0 +1,31 @@
+﻿name: Deploy QA SerfitUP
+
+on:
+  push:
+    branches:
+      - qa
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Actualizar frontend
+        run: |
+          cd /var/www/qa-app/frontend
+          git fetch origin
+          git reset --hard origin/qa
+
+      - name: Actualizar backend
+        run: |
+          cd /var/www/qa-app/backend
+          git fetch origin
+          git reset --hard origin/qa
+
+      - name: Rebuild Docker
+        run: |
+          cd /var/www/qa-app
+          docker compose down
+          docker compose build --no-cache
+          docker compose up -d
+          echo "Deploy completado"
