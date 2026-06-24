@@ -175,7 +175,7 @@ const {
           {" "}
           ¿olvidaste tu contraseña? Restablecer
         </Link>
-          <button type="submit">Sign In test de prueba </button>
+          <button type="submit">Sign In</button>
         </form>
       </div>
 
