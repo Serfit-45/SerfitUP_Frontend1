@@ -1,0 +1,47 @@
+name: Deploy QA SerfitUP - Frontend
+
+on:
+  push:
+    branches:
+      - qa
+      - react-app
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout codigo React app
+        uses: actions/checkout@v4
+        with:
+          ref: react-app
+          path: react-app-src
+          clean: true
+
+      - name: Sincronizar React app al directorio de build
+        run: |
+          rsync -av --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            ${{ github.workspace }}/react-app-src/ \
+            /var/www/qa-app/frontend/serfitUp_frontend/
+
+      - name: Actualizar archivos de orquestacion
+        run: |
+          cd /var/www/qa-app/frontend
+          git fetch origin
+          git checkout origin/qa -- docker-compose.yml nginx.conf
+
+      - name: Actualizar backend
+        run: |
+          cd /var/www/qa-app/backend
+          git fetch origin
+          git reset --hard origin/qa
+
+      - name: Rebuild Docker
+        run: |
+          cd /var/www/qa-app
+          docker compose down
+          docker compose build --no-cache
+          docker compose up -d
+          echo "✅ Deploy completado"

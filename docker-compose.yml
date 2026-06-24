@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: backend_qa
+    restart: always
+    env_file:
+      - ./backend/.env
+    ports:
+      - "3000:3000"
+
+  nginx:
+    build:
+      context: ./frontend/serfitUp_frontend
+      args:
+        VITE_API_URL: http://172.17.13.51/api
+    container_name: nginx_qa
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
